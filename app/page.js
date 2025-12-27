@@ -97,18 +97,20 @@ const LandingPage = () => {
             Join thousands of users who are already managing their finances
             smarter with PayNey
           </p>
-          <Link href="/dashboard">
-            <Button size="lg" className="brand-glow bg-primary text-primary-foreground hover:bg-primary/90">
-              Start Free Trial
-            </Button>
-          </Link>
+          <Button
+            asChild
+            size="lg"
+            className="brand-glow bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <Link href="/dashboard">Start Free Trial</Link>
+          </Button>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-border py-8">
         <div className="container mx-auto flex flex-col items-center justify-between gap-2 px-4 text-sm text-muted-foreground md:flex-row">
-          <p>Made with care by otzr.labs</p>
+          <p>Made with ❤️ by otzr.labs</p>
           <p>© 2026 PayNey. All rights reserved.</p>
         </div>
       </footer>

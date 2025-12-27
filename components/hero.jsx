@@ -66,11 +66,13 @@ const HeroSection = () => {
             where your money went and where it can go further.
           </p>
 
-          <Link href="/dashboard">
-            <Button size="lg" className="brand-glow bg-primary px-8 text-primary-foreground hover:bg-primary/90">
-              Get started
-            </Button>
-          </Link>
+          <Button
+            asChild
+            size="lg"
+            className="brand-glow bg-primary px-8 text-primary-foreground hover:bg-primary/90"
+          >
+            <Link href="/dashboard">Get started</Link>
+          </Button>
         </div>
 
         <div className="flex items-center justify-center lg:w-1/3">
