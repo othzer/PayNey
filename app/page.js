@@ -1,129 +1,117 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Image from "next/image";
-import {
-  featuresData,
-  howItWorksData,
-  statsData,
-  testimonialsData,
-} from "@/data/landing";
+import { featuresData, howItWorksData } from "@/data/landing";
 import HeroSection from "@/components/hero";
+import Navbar from "@/components/navbar";
+import ScrollReveal from "@/components/scroll-reveal";
 import Link from "next/link";
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
+      <Navbar />
+
       {/* Hero Section */}
       <HeroSection />
-
-      {/* Stats Section */}
-      <section className="py-20 bg-blue-50">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {statsData.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-4xl font-bold text-blue-600 mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-gray-600">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Features Section */}
       <section id="features" className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Everything you need to manage your finances
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <ScrollReveal>
+            <h2 className="mb-12 text-center text-3xl font-bold">
+              Everything you need to manage your finances
+            </h2>
+          </ScrollReveal>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {featuresData.map((feature, index) => (
-              <Card className="p-6" key={index}>
-                <CardContent className="space-y-4 pt-4">
-                  {feature.icon}
-                  <h3 className="text-xl font-semibold">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
-                </CardContent>
-              </Card>
+              <ScrollReveal key={index}>
+                <Card className="h-full border-border bg-card p-6">
+                  <CardContent className="space-y-4 pt-4">
+                    {feature.icon}
+                    <h3 className="text-xl font-semibold">{feature.title}</h3>
+                    <p className="text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 bg-blue-50">
+      <section id="how-it-works" className="border-t border-border py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-16">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <ScrollReveal>
+            <h2 className="mb-16 text-center text-3xl font-bold">
+              How It Works
+            </h2>
+          </ScrollReveal>
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
             {howItWorksData.map((step, index) => (
-              <div key={index} className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <ScrollReveal key={index} className="text-center">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-border bg-card">
                   {step.icon}
                 </div>
-                <h3 className="text-xl font-semibold mb-4">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
-              </div>
+                <h3 className="mb-4 text-xl font-semibold">{step.title}</h3>
+                <p className="text-muted-foreground">{step.description}</p>
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-20">
+      {/* Pricing Section (placeholder) */}
+      <section id="pricing" className="border-t border-border py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-16">
-            What Our Users Say
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonialsData.map((testimonial, index) => (
-              <Card key={index} className="p-6">
-                <CardContent className="pt-4">
-                  <div className="flex items-center mb-4">
-                    <Image
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
-                    <div className="ml-4">
-                      <div className="font-semibold">{testimonial.name}</div>
-                      <div className="text-sm text-gray-600">
-                        {testimonial.role}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-gray-600">{testimonial.quote}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ScrollReveal>
+            <h2 className="text-center text-3xl font-bold">Pricing</h2>
+            <p className="mt-4 text-center text-muted-foreground">
+              Coming soon.
+            </p>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* About Us Section (placeholder) */}
+      <section id="about" className="border-t border-border py-20">
+        <div className="container mx-auto px-4">
+          <ScrollReveal>
+            <h2 className="text-center text-3xl font-bold">About us</h2>
+            <p className="mt-4 text-center text-muted-foreground">
+              Coming soon.
+            </p>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-blue-600">
+      <section className="border-t border-border py-20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <h2 className="mb-4 text-3xl font-bold">
             Ready to Take Control of Your Finances?
           </h2>
-          <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
+          <p className="mx-auto mb-8 max-w-2xl text-muted-foreground">
             Join thousands of users who are already managing their finances
-            smarter with Welth
+            smarter with PayNey
           </p>
           <Link href="/dashboard">
-            <Button
-              size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50 animate-bounce"
-            >
+            <Button size="lg" className="brand-glow bg-primary text-primary-foreground hover:bg-primary/90">
               Start Free Trial
             </Button>
           </Link>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border py-8">
+        <div className="container mx-auto flex flex-col items-center justify-between gap-2 px-4 text-sm text-muted-foreground md:flex-row">
+          <p>Made with care by otzr.labs</p>
+          <p>© 2026 PayNey. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 };
