@@ -1,0 +1,14 @@
+<svg width="800" height="1000" viewBox="0 0 800 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="sheen" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#222FA8" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#222FA8" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="800" height="1000" fill="#16171C" />
+  <rect width="800" height="1000" fill="url(#sheen)" />
+  <circle cx="400" cy="480" r="220" fill="none" stroke="#2C2E36" stroke-width="1.5" />
+  <circle cx="400" cy="480" r="160" fill="none" stroke="#2C2E36" stroke-width="1.5" />
+  <circle cx="400" cy="480" r="92" fill="#16171C" stroke="#3D4ED1" stroke-width="1.5" />
+  <path d="M400 448 L410 470 L432 480 L410 490 L400 512 L390 490 L368 480 L390 470 Z" fill="#222FA8" />
+</svg>
