@@ -1,15 +1,27 @@
-import Header from "@/components/header";
+import Image from "next/image";
+import AuthNavbar from "@/components/auth-navbar";
+import Footer from "@/components/footer";
 
 const AuthLayout = ({ children }) => {
   return (
     <>
-      <Header />
-      <div className="flex justify-center pt-40">{children}</div>
-      <footer className="bg-blue-50 py-12">
-        <div className="container mx-auto px-4 text-center text-gray-600">
-          <p>Made with 💗 by Otzr.Labs</p>
+      <AuthNavbar />
+      <div className="flex min-h-screen flex-col lg:flex-row">
+        <div className="flex flex-1 items-center justify-center px-4 pb-16 pt-32 lg:pt-0">
+          {children}
         </div>
-      </footer>
+        <div className="hidden bg-card lg:flex lg:flex-1 lg:items-center lg:justify-center">
+          <Image
+            src="/sigininpage.svg"
+            alt=""
+            width={800}
+            height={1000}
+            className="h-full w-full object-cover"
+            priority
+          />
+        </div>
+      </div>
+      <Footer />
     </>
   );
 };

@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { featuresData, howItWorksData } from "@/data/landing";
 import HeroSection from "@/components/hero";
 import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 import ScrollReveal from "@/components/scroll-reveal";
 import Link from "next/link";
 
@@ -107,13 +108,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8">
-        <div className="container mx-auto flex flex-col items-center justify-between gap-2 px-4 text-sm text-muted-foreground md:flex-row">
-          <p>Made with ❤️ by otzr.labs</p>
-          <p>© 2026 PayNey. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
