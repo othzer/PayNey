@@ -24,7 +24,7 @@ const RANGES = {
   "3M": { label: "Last 3 months", days: 90 },
 };
 
-export function CashFlowCard({ transactions }) {
+export function CashFlowChart({ transactions, title = "Cash flow" }) {
   const [range, setRange] = useState("7D");
   const { days } = RANGES[range];
 
@@ -58,7 +58,7 @@ export function CashFlowCard({ transactions }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-5 card-lifted">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted-foreground">Cash flow</p>
+        <p className="text-sm font-medium text-muted-foreground">{title}</p>
         <Select value={range} onValueChange={setRange}>
           <SelectTrigger className="h-7 w-[140px] rounded-full text-xs">
             <SelectValue />
