@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { defaultCategories } from "@/data/categories";
+import { TransactionRowActions } from "@/components/transaction-row-actions";
 
 const categoryById = defaultCategories.reduce((acc, c) => {
   acc[c.id] = c;
@@ -12,7 +13,7 @@ const categoryById = defaultCategories.reduce((acc, c) => {
 
 const MAX_ROWS = 8;
 
-export function RecentTransactionsCard({ transactions }) {
+export function RecentTransactionsCard({ transactions, onTransactionDeleted }) {
   const rows = useMemo(
     () =>
       [...transactions]
@@ -48,13 +49,14 @@ export function RecentTransactionsCard({ transactions }) {
                 <th className="pb-2 font-medium">Description</th>
                 <th className="pb-2 font-medium">Category</th>
                 <th className="pb-2 text-right font-medium">Amount</th>
+                <th className="w-8 pb-2" />
               </tr>
             </thead>
             <tbody>
               {rows.map((t) => {
                 const category = categoryById[t.category];
                 return (
-                  <tr key={t.id} className="border-t border-border">
+                  <tr key={t.id} className="group border-t border-border">
                     <td className="whitespace-nowrap py-2.5 text-muted-foreground">
                       {format(new Date(t.date), "MMM d")}
                     </td>
@@ -78,6 +80,12 @@ export function RecentTransactionsCard({ transactions }) {
                       }`}
                     >
                       {t.type === "EXPENSE" ? "-" : "+"}${t.amount.toFixed(2)}
+                    </td>
+                    <td className="py-2.5 text-right">
+                      <TransactionRowActions
+                        transaction={t}
+                        onDeleted={onTransactionDeleted}
+                      />
                     </td>
                   </tr>
                 );

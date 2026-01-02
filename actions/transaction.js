@@ -91,7 +91,7 @@ export async function createTransaction(data) {
     });
 
     revalidatePath("/dashboard");
-    revalidatePath(`/account/${transaction.accountId}`);
+    revalidatePath("/accounts");
 
     return { success: true, data: serializeAmount(transaction) };
   } catch (error) {
@@ -186,7 +186,7 @@ export async function updateTransaction(id, data) {
     });
 
     revalidatePath("/dashboard");
-    revalidatePath(`/account/${data.accountId}`);
+    revalidatePath("/accounts");
 
     return { success: true, data: serializeAmount(transaction) };
   } catch (error) {
