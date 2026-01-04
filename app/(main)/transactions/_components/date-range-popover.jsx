@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { startOfMonth, endOfMonth, subMonths } from "date-fns";
+import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const PRESETS = [
@@ -21,23 +21,34 @@ const PRESETS = [
   },
 ];
 
+function toInputValue(isoString) {
+  if (!isoString) return "";
+  return format(new Date(isoString), "yyyy-MM-dd");
+}
+
 export function DateRangePopover({ from, to, onApply }) {
   const [open, setOpen] = useState(false);
-  const [range, setRange] = useState({
-    from: from ? new Date(from) : undefined,
-    to: to ? new Date(to) : undefined,
-  });
+  const [startDate, setStartDate] = useState(toInputValue(from));
+  const [endDate, setEndDate] = useState(toInputValue(to));
+
+  useEffect(() => {
+    if (!open) return;
+    setStartDate(toInputValue(from));
+    setEndDate(toInputValue(to));
+  }, [open, from, to]);
 
   const handlePreset = (preset) => {
     const r = preset.range();
-    setRange(r);
     onApply({ from: r.from.toISOString(), to: r.to.toISOString() });
     setOpen(false);
   };
 
   const handleApply = () => {
-    if (!range?.from || !range?.to) return;
-    onApply({ from: range.from.toISOString(), to: range.to.toISOString() });
+    if (!startDate || !endDate) return;
+    const fromDate = new Date(`${startDate}T00:00:00`);
+    const toDate = new Date(`${endDate}T23:59:59`);
+    if (fromDate > toDate) return;
+    onApply({ from: fromDate.toISOString(), to: toDate.toISOString() });
     setOpen(false);
   };
 
@@ -48,7 +59,7 @@ export function DateRangePopover({ from, to, onApply }) {
           <CalendarIcon className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-3" align="end">
+      <PopoverContent className="w-72" align="end">
         <div className="flex gap-2 pb-3">
           {PRESETS.map((p) => (
             <button
@@ -61,12 +72,33 @@ export function DateRangePopover({ from, to, onApply }) {
             </button>
           ))}
         </div>
-        <Calendar mode="range" selected={range} onSelect={setRange} numberOfMonths={1} />
+
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Start date</label>
+            <Input
+              type="date"
+              value={startDate}
+              max={endDate || undefined}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">End date</label>
+            <Input
+              type="date"
+              value={endDate}
+              min={startDate || undefined}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+        </div>
+
         <Button
-          className="mt-2 w-full"
+          className="mt-3 w-full"
           size="sm"
           onClick={handleApply}
-          disabled={!range?.from || !range?.to}
+          disabled={!startDate || !endDate}
         >
           Apply range
         </Button>
