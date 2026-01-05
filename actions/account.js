@@ -195,23 +195,24 @@ export async function deleteAccount(accountId) {
 
     if (!account) throw new Error("Account not found");
 
-    // Transactions on this account are removed automatically (onDelete: Cascade)
-    await db.account.delete({ where: { id: accountId, userId: user.id } });
+    const newDefaultAccountId = await db.$transaction(async (tx) => {
+      // Transactions on this account are removed automatically (onDelete: Cascade)
+      await tx.account.delete({ where: { id: accountId, userId: user.id } });
 
-    let newDefaultAccountId = null;
-    if (account.isDefault) {
-      const nextDefault = await db.account.findFirst({
+      if (!account.isDefault) return null;
+
+      const nextDefault = await tx.account.findFirst({
         where: { userId: user.id },
         orderBy: { createdAt: "desc" },
       });
-      if (nextDefault) {
-        await db.account.update({
-          where: { id: nextDefault.id },
-          data: { isDefault: true },
-        });
-        newDefaultAccountId = nextDefault.id;
-      }
-    }
+      if (!nextDefault) return null;
+
+      await tx.account.update({
+        where: { id: nextDefault.id },
+        data: { isDefault: true },
+      });
+      return nextDefault.id;
+    });
 
     revalidatePath("/dashboard");
     revalidatePath("/accounts");
