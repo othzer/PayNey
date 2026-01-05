@@ -1,4 +1,11 @@
-import { startOfMonth, endOfMonth, parseISO, subMonths, format } from "date-fns";
+import {
+  startOfMonth,
+  endOfMonth,
+  parseISO,
+  subMonths,
+  format,
+  isValid,
+} from "date-fns";
 import { getUserAccounts } from "@/actions/dashboard";
 import {
   getFilteredTransactions,
@@ -6,11 +13,21 @@ import {
 } from "@/actions/transaction";
 import { TransactionsPageClient } from "./_components/transactions-page-client";
 
+function normalizeParam(value) {
+  return Array.isArray(value) ? value.join(",") : value;
+}
+
 function resolveDateRange(params) {
   if (params.from && params.to) {
-    return { from: parseISO(params.from), to: parseISO(params.to) };
+    const from = parseISO(normalizeParam(params.from));
+    const to = parseISO(normalizeParam(params.to));
+    if (isValid(from) && isValid(to)) {
+      return { from, to };
+    }
   }
-  const base = params.month ? parseISO(`${params.month}-01`) : new Date();
+  const month = normalizeParam(params.month);
+  const parsedMonth = month ? parseISO(`${month}-01`) : null;
+  const base = parsedMonth && isValid(parsedMonth) ? parsedMonth : new Date();
   return { from: startOfMonth(base), to: endOfMonth(base) };
 }
 
@@ -28,11 +45,18 @@ export default async function TransactionsPage({ searchParams }) {
 
   const accountId =
     params.account && params.account !== "all" ? params.account : undefined;
-  const categories = params.category ? params.category.split(",") : undefined;
-  const types = params.type ? params.type.split(",") : undefined;
-  const recurring = params.recurring ? params.recurring.split(",") : undefined;
-  const amountMin = params.amountMin ? parseFloat(params.amountMin) : undefined;
-  const amountMax = params.amountMax ? parseFloat(params.amountMax) : undefined;
+
+  const categoryParam = normalizeParam(params.category);
+  const typeParam = normalizeParam(params.type);
+  const recurringParam = normalizeParam(params.recurring);
+  const categories = categoryParam ? categoryParam.split(",") : undefined;
+  const types = typeParam ? typeParam.split(",") : undefined;
+  const recurring = recurringParam ? recurringParam.split(",") : undefined;
+
+  const parsedAmountMin = parseFloat(normalizeParam(params.amountMin));
+  const parsedAmountMax = parseFloat(normalizeParam(params.amountMax));
+  const amountMin = Number.isFinite(parsedAmountMin) ? parsedAmountMin : undefined;
+  const amountMax = Number.isFinite(parsedAmountMax) ? parsedAmountMax : undefined;
 
   const [accounts, { transactions, summary }, amountRange] = await Promise.all([
     getUserAccounts(),
