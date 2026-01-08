@@ -165,7 +165,7 @@ export async function getPendingReviewCount() {
 
   if (!user) return 0;
 
-  return db.transaction.count({
-    where: { userId: user.id, status: "PENDING" },
+  return db.pendingTransaction.count({
+    where: { userId: user.id, status: "pending" },
   });
 }
