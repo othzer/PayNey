@@ -27,13 +27,21 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {featuresData.map((feature, index) => (
               <ScrollReveal key={index}>
-                <Card className="h-full border-border bg-card p-6">
+                <Card className="h-full rounded-2xl border-border bg-card p-6 card-lifted">
                   <CardContent className="space-y-4 pt-4">
                     {feature.icon}
                     <h3 className="text-xl font-semibold">{feature.title}</h3>
                     <p className="text-muted-foreground">
                       {feature.description}
                     </p>
+                    {feature.href && (
+                      <Link
+                        href={feature.href}
+                        className="inline-block text-sm text-primary hover:underline"
+                      >
+                        {feature.linkLabel || "Learn more"} &rarr;
+                      </Link>
+                    )}
                   </CardContent>
                 </Card>
               </ScrollReveal>

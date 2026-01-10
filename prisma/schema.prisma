@@ -9,16 +9,19 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  clerkUserId   String    @unique // clerk user id
-  email         String    @unique
-  name          String?
-  imageUrl      String?
-  transactions  Transaction[]
-  accounts      Account[]
-  budgets       Budget[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id                   String    @id @default(uuid())
+  clerkUserId          String    @unique // clerk user id
+  email                String    @unique
+  name                 String?
+  imageUrl             String?
+  transactions         Transaction[]
+  accounts             Account[]
+  budgets              Budget[]
+  pendingTransactions  PendingTransaction[]
+  merchantCategoryMaps MerchantCategoryMap[]
+  lastCaptureSyncAt    DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
 
   @@map("users")
 }
@@ -76,6 +79,40 @@ model Budget {
 
   @@index([userId])
   @@map("budgets")
+}
+
+model PendingTransaction {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceChannel     String   // 'sms' | 'notification' | 'receipt'
+  rawText           String?  // short-lived, only kept until confirmed/discarded
+  referenceNumber   String?  // UPI UTR/RRN if present — primary dedup key
+  parsedAmount      Float
+  parsedDirection   String   // 'credit' | 'debit'
+  parsedMerchant    String?
+  parsedDate        DateTime
+  suggestedCategory String?
+  suggestedName     String?
+  confidence        String   // 'low' | 'medium' | 'high'
+  status            String   @default("pending") // 'pending' | 'confirmed' | 'discarded'
+  createdAt         DateTime @default(now())
+
+  @@index([userId, parsedAmount, parsedDate])
+  @@index([userId, status])
+  @@map("pending_transactions")
+}
+
+model MerchantCategoryMap {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchantPattern String   // normalized (lowercase, trimmed) merchant string
+  category        String
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, merchantPattern])
+  @@map("merchant_category_maps")
 }
 
 enum TransactionType {
