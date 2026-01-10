@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { PendingTransactionCard } from "./pending-transaction-card";
 import { bulkConfirmSuggested } from "@/actions/review";
 import useFetch from "@/hooks/use-fetch";
 
-export function ReviewClient({ initialTransactions }) {
+export function ReviewClient({ initialTransactions, hasEverConnected }) {
   const [transactions, setTransactions] = useState(initialTransactions);
 
   const {
@@ -53,7 +54,20 @@ export function ReviewClient({ initialTransactions }) {
       </div>
 
       {transactions.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No pending reviews</p>
+        hasEverConnected ? (
+          <p className="text-sm text-muted-foreground">
+            No pending reviews. You&apos;re all caught up.
+          </p>
+        ) : (
+          <div className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-card p-5 card-lifted">
+            <p className="text-sm text-muted-foreground">
+              Connect your phone to start capturing transactions automatically
+            </p>
+            <Button asChild size="sm">
+              <Link href="/connect">Set up automatic capture</Link>
+            </Button>
+          </div>
+        )
       ) : (
         <div className="space-y-3">
           {transactions.map((t) => (
