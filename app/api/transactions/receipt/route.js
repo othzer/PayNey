@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { resolveRequestUser } from "@/lib/auth/resolve-request-user";
 import { getGeminiModel, cleanJsonResponse } from "@/lib/gemini";
 import { defaultCategories } from "@/data/categories";
 
 // Stateless: extracts fields from a receipt image and returns them so a client
 // (the future Android app, or a web upload) can pre-fill the Add Transaction form
 // for the user to confirm. Does NOT create a PendingTransaction or touch Review.
+// Authenticated via either a web session (Clerk cookie) or a paired device's
+// Bearer token — see lib/auth/resolve-request-user.js.
 export async function POST(req) {
-  const { userId } = await auth();
-  if (!userId) {
+  const user = await resolveRequestUser(req);
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

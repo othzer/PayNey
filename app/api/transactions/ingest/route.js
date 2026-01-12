@@ -1,22 +1,16 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/prisma";
+import { resolveRequestUser } from "@/lib/auth/resolve-request-user";
 import { parseTransaction } from "@/lib/transaction-capture/parse";
 import { findDuplicate } from "@/lib/transaction-capture/dedupe";
 import { categorizeTransaction } from "@/lib/transaction-capture/categorize";
 
-// Authenticated via the existing Clerk session for now. `deviceToken` is accepted
-// (and currently unused) so the future Android app's device-based auth can be wired
-// in later without a breaking body-shape change.
+// Authenticated via either a web session (Clerk cookie) or a paired device's
+// Bearer token — see lib/auth/resolve-request-user.js.
 export async function POST(req) {
-  const { userId: clerkUserId } = await auth();
-  if (!clerkUserId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const user = await db.user.findUnique({ where: { clerkUserId } });
+  const user = await resolveRequestUser(req);
   if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body;
@@ -27,7 +21,6 @@ export async function POST(req) {
   }
 
   const { sourceChannel, rawText, timestamp } = body;
-  void body.deviceToken;
 
   if (sourceChannel !== "sms" && sourceChannel !== "notification") {
     return NextResponse.json(
