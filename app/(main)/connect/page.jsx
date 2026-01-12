@@ -1,33 +1,45 @@
 import { formatDistanceToNow } from "date-fns";
 import { Download, ShieldCheck, Smartphone } from "lucide-react";
-import { getCaptureSyncStatus } from "@/actions/capture";
+import { getCaptureConnectionStatus } from "@/actions/capture";
 import { CAPTURE_APK_URL } from "@/lib/capture-config";
 import { Button } from "@/components/ui/button";
+import { PairingCodeCard } from "./_components/pairing-code-card";
 
 const SETUP_STEPS = [
   "Download and install the APK above",
-  "Open the app and log in with your PayNey account",
+  "Generate a pairing code below and enter it in the app",
   "Grant SMS and Notification access when prompted (Android will ask twice — once for SMS, once for notification listener access in Settings)",
   "Done — transactions will start appearing in your Review queue automatically",
 ];
 
 export default async function ConnectPage() {
-  const { lastCaptureSyncAt } = await getCaptureSyncStatus();
-  const isConnected = Boolean(lastCaptureSyncAt);
+  const { hasDevice, lastCaptureSyncAt } = await getCaptureConnectionStatus();
+
+  let statusLabel;
+  let connected;
+  if (hasDevice && lastCaptureSyncAt) {
+    statusLabel = `Connected · last synced ${formatDistanceToNow(new Date(lastCaptureSyncAt), { addSuffix: true })}`;
+    connected = true;
+  } else if (hasDevice) {
+    statusLabel = "Connected · not synced yet";
+    connected = true;
+  } else {
+    statusLabel = "Not connected yet";
+    connected = false;
+  }
 
   return (
     <div className="mx-auto max-w-[600px] space-y-8">
       <div className="space-y-4">
-        {isConnected ? (
+        {connected ? (
           <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs font-medium text-green-400">
             <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
-            Connected &middot; last synced{" "}
-            {formatDistanceToNow(new Date(lastCaptureSyncAt), { addSuffix: true })}
+            {statusLabel}
           </span>
         ) : (
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground" />
-            Not connected yet
+            {statusLabel}
           </span>
         )}
 
@@ -61,6 +73,8 @@ export default async function ConnectPage() {
           allow installs from unknown sources.
         </p>
       </div>
+
+      <PairingCodeCard />
 
       <div className="space-y-3">
         {SETUP_STEPS.map((step, i) => (

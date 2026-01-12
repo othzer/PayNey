@@ -3,14 +3,20 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/prisma";
 
-export async function getCaptureSyncStatus() {
+export async function getCaptureConnectionStatus() {
   const { userId } = await auth();
-  if (!userId) return { lastCaptureSyncAt: null };
+  if (!userId) return { hasDevice: false, lastCaptureSyncAt: null };
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
-    select: { lastCaptureSyncAt: true },
+    select: { id: true, lastCaptureSyncAt: true },
+  });
+  if (!user) return { hasDevice: false, lastCaptureSyncAt: null };
+
+  const device = await db.device.findFirst({
+    where: { userId: user.id, revoked: false },
+    select: { id: true },
   });
 
-  return { lastCaptureSyncAt: user?.lastCaptureSyncAt || null };
+  return { hasDevice: Boolean(device), lastCaptureSyncAt: user.lastCaptureSyncAt };
 }
