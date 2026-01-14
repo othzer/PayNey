@@ -12,10 +12,10 @@ const AuthLayout = ({ children }) => {
         </div>
         <div className="hidden bg-card lg:flex lg:flex-1 lg:items-center lg:justify-center">
           <Image
-            src="/sigininpage.svg"
+            src="/auth-image.svg"
             alt=""
-            width={800}
-            height={1000}
+            width={400}
+            height={500}
             className="h-full w-full object-cover"
             priority
           />

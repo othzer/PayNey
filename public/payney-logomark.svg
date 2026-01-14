@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="PayNey app icon">
+  <rect width="512" height="512" rx="116" fill="#222FA8"></rect>
+  <path fill="#ffffff" d="&#xA;    M150 128&#xA;    a29 29 0 0 1 29 -29&#xA;    h6&#xA;    a29 29 0 0 1 29 29&#xA;    v256&#xA;    a29 29 0 0 1 -29 29&#xA;    h-6&#xA;    a29 29 0 0 1 -29 -29&#xA;    Z&#xA;    M236 100&#xA;    a98 98 0 1 1 0 196&#xA;    a98 98 0 1 1 0 -196&#xA;    Z&#xA;    M236 152&#xA;    a46 46 0 1 0 0 92&#xA;    a46 46 0 1 0 0 -92&#xA;    Z&#xA;  "></path>
+</svg>
