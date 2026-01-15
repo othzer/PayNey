@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { featuresData, howItWorksData } from "@/data/landing";
 import HeroSection from "@/components/hero";
 import Navbar from "@/components/navbar";
+import CaptureSection from "@/components/capture-section";
 import Footer from "@/components/footer";
 import ScrollReveal from "@/components/scroll-reveal";
 import Link from "next/link";
@@ -15,6 +16,9 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Automatic Capture Section */}
+      <CaptureSection />
 
       {/* Features Section */}
       <section id="features" className="py-20">

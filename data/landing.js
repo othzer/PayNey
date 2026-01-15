@@ -8,25 +8,6 @@ import {
   Smartphone,
 } from "lucide-react";
 
-// Stats Data
-export const statsData = [
-  {
-    value: "50K+",
-    label: "Active Users",
-  },
-  {
-    value: "$2B+",
-    label: "Transactions Tracked",
-  },
-  {
-    value: "99.9%",
-    label: "Uptime",
-  },
-  {
-    value: "4.9/5",
-    label: "User Rating",
-  },
-];
 
 // Features Data
 export const featuresData = [
@@ -35,7 +16,7 @@ export const featuresData = [
     title: "Automatic Capture",
     description:
       "Reads your bank SMS and UPI app notifications and brings the transactions straight to your Review queue — no manual entry.",
-    href: "/connect",
+    href: "#connect",
     linkLabel: "Learn more",
   },
   {
@@ -91,30 +72,5 @@ export const howItWorksData = [
     title: "3. Get Insights",
     description:
       "Receive AI-powered insights and recommendations to optimize your finances",
-  },
-];
-
-// Testimonials Data
-export const testimonialsData = [
-  {
-    name: "Sarah Johnson",
-    role: "Small Business Owner",
-    image: "https://randomuser.me/api/portraits/women/75.jpg",
-    quote:
-      "Welth has transformed how I manage my business finances. The AI insights have helped me identify cost-saving opportunities I never knew existed.",
-  },
-  {
-    name: "Michael Chen",
-    role: "Freelancer",
-    image: "https://randomuser.me/api/portraits/men/75.jpg",
-    quote:
-      "The receipt scanning feature saves me hours each month. Now I can focus on my work instead of manual data entry and expense tracking.",
-  },
-  {
-    name: "Emily Rodriguez",
-    role: "Financial Advisor",
-    image: "https://randomuser.me/api/portraits/women/74.jpg",
-    quote:
-      "I recommend Welth to all my clients. The multi-currency support and detailed analytics make it perfect for international investors.",
   },
 ];
