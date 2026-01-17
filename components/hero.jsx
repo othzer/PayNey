@@ -77,24 +77,14 @@ const HeroSection = () => {
         </div>
 
         <div className="flex items-center justify-center lg:w-1/3">
-          <div className="relative flex h-[120px] w-[120px] items-center justify-center">
-            {/* <div className="absolute inset-0 rounded-full border border-border" />
-            <div className="absolute inset-[14px] rounded-full border border-border" />
-            <div
-              className="brand-glow absolute inset-[32px] flex items-center justify-center rounded-full bg-card"
-              style={{ border: "1px solid #3D4ED1" }}
-            >
-              <Sparkles className="h-6 w-6 text-primary" />
-            </div> */}
-            <Image
-              src="/hero-image.svg"
-              alt=""
-              width={800}
-              height={800}
-              className="h-full w-full object-cover"
-              priority
-            />
-          </div>
+          <Image
+            src="/hero-image.svg"
+            alt=""
+            width={799}
+            height={552}
+            className="h-auto w-full max-w-[360px] object-contain"
+            priority
+          />
         </div>
       </div>
     </section>

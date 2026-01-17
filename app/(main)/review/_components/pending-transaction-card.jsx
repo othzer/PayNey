@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ export function PendingTransactionCard({ transaction, onResolved }) {
   const [name, setName] = useState(
     transaction.suggestedName || transaction.parsedMerchant || ""
   );
+  const [direction, setDirection] = useState(transaction.parsedDirection);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const {
@@ -61,15 +63,19 @@ export function PendingTransactionCard({ transaction, onResolved }) {
   }, [discardResult]);
 
   const handleConfirm = () => {
-    confirmFn(transaction.id, { category, name });
+    confirmFn(transaction.id, { category, name, direction });
   };
 
   const handleDiscard = () => {
     discardFn(transaction.id);
   };
 
+  const toggleDirection = () => {
+    setDirection((current) => (current === "debit" ? "credit" : "debit"));
+  };
+
   const categoryInfo = category ? categoryById[category] : null;
-  const isExpense = transaction.parsedDirection === "debit";
+  const isExpense = direction === "debit";
   const busy = confirmLoading || discardLoading;
 
   return (
@@ -85,14 +91,34 @@ export function PendingTransactionCard({ transaction, onResolved }) {
             {format(new Date(transaction.parsedDate), "MMM d, yyyy")}
           </p>
         </div>
-        <p
-          className={cn(
-            "money shrink-0 text-lg",
-            isExpense ? "text-red-400" : "text-green-400"
-          )}
-        >
-          {isExpense ? "-" : "+"}${transaction.parsedAmount.toFixed(2)}
-        </p>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleDirection}
+            title="Click to change type"
+            className={cn(
+              "flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors",
+              isExpense
+                ? "border-red-500/30 bg-red-500/10 text-red-400"
+                : "border-green-500/30 bg-green-500/10 text-green-400"
+            )}
+          >
+            {isExpense ? (
+              <ArrowDownRight className="h-3 w-3" />
+            ) : (
+              <ArrowUpRight className="h-3 w-3" />
+            )}
+            {isExpense ? "Expense" : "Income"}
+          </button>
+          <p
+            className={cn(
+              "money text-lg",
+              isExpense ? "text-red-400" : "text-green-400"
+            )}
+          >
+            {isExpense ? "-" : "+"}${transaction.parsedAmount.toFixed(2)}
+          </p>
+        </div>
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-3">
