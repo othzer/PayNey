@@ -32,16 +32,18 @@ export async function POST(req) {
   const arrayBuffer = await file.arrayBuffer();
   const base64String = Buffer.from(arrayBuffer).toString("base64");
 
-  const categoryList = defaultCategories
-    .filter((c) => c.type === "EXPENSE")
-    .map((c) => c.id)
+  const expenseCategories = defaultCategories.filter(
+    (c) => c.type === "EXPENSE"
+  );
+  const categoryList = expenseCategories
+    .map((c) => `${c.id} (${c.name})`)
     .join(", ");
 
   const prompt = `Analyze this receipt image and extract:
 - amount (number)
 - merchant (string)
 - date (ISO date string)
-- suggestedCategory (one of: ${categoryList})
+- suggestedCategory: classify the purchase into exactly one category id from this list, based on the merchant name and items purchased: ${categoryList}. Always pick the closest match — only use "other-expense" if truly nothing else fits.
 
 Respond with ONLY strict JSON: {"amount": number, "merchant": string, "date": "ISO date string", "suggestedCategory": string}
 If this isn't a receipt, return {}.`;
@@ -53,12 +55,15 @@ If this isn't a receipt, return {}.`;
       prompt,
     ]);
     const data = JSON.parse(cleanJsonResponse(result.response.text()));
+    const matchedCategory = expenseCategories.find(
+      (c) => c.id === data.suggestedCategory
+    );
 
     return NextResponse.json({
       amount: data.amount ? parseFloat(data.amount) : null,
       merchant: data.merchant || null,
       date: data.date || null,
-      suggestedCategory: data.suggestedCategory || null,
+      suggestedCategory: matchedCategory?.id || (data.amount ? "other-expense" : null),
     });
   } catch (error) {
     return NextResponse.json(

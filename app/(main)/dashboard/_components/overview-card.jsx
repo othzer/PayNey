@@ -86,7 +86,7 @@ export function OverviewCard({
           <span>{insight}</span>
         </div>
         <a
-          href="#"
+          href="/summary"
           className="shrink-0 text-sm text-primary hover:underline"
         >
           View summary &rarr;
