@@ -79,7 +79,7 @@ export function TopCategoriesCard({ transactions }) {
                 />
               </div>
               <span className="money w-20 shrink-0 text-right text-sm">
-                ${row.amount.toFixed(2)}
+                ₹{row.amount.toFixed(2)}
               </span>
             </div>
           ))

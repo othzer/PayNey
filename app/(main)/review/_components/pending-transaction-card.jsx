@@ -116,7 +116,7 @@ export function PendingTransactionCard({ transaction, onResolved }) {
               isExpense ? "text-red-400" : "text-green-400"
             )}
           >
-            {isExpense ? "-" : "+"}${transaction.parsedAmount.toFixed(2)}
+            {isExpense ? "-" : "+"}₹{transaction.parsedAmount.toFixed(2)}
           </p>
         </div>
       </div>

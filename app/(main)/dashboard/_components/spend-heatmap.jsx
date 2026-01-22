@@ -119,7 +119,7 @@ export function SpendHeatmap({ transactions }) {
                       cell
                         ? `${format(cell.day, "MMM d")}: ${
                             cell.net >= 0 ? "+" : "-"
-                          }$${Math.abs(cell.net).toFixed(2)}`
+                          }₹${Math.abs(cell.net).toFixed(2)}`
                         : undefined
                     }
                   />

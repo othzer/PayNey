@@ -1,7 +1,6 @@
 import { getUserAccounts, getDashboardData, getPendingReviewCount } from "@/actions/dashboard";
 import { getCurrentBudget } from "@/actions/budget";
 import { DashboardClient } from "./_components/dashboard-client";
-import { testEmail } from "@/actions/test-email";
 
 export default async function DashboardPage() {
   const [accounts, transactions, pendingReviewCount] = await Promise.all([
@@ -17,8 +16,6 @@ export default async function DashboardPage() {
     const budgetData = await getCurrentBudget(defaultAccount.id);
     budget = budgetData?.budget || null;
   }
-
-  await testEmail();
 
   return (
     <DashboardClient

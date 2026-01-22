@@ -9,6 +9,8 @@ import {
   Wallet,
   ArrowLeftRight,
   ClipboardCheck,
+  Sparkles,
+  Smartphone,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -33,6 +35,8 @@ const NAV_ITEMS = [
     icon: ClipboardCheck,
     showBadge: true,
   },
+  { href: "/summary", label: "AI Summary", icon: Sparkles },
+  { href: "/connect", label: "Connect", icon: Smartphone },
 ];
 
 const STORAGE_KEY = "payney:sidebar-collapsed";

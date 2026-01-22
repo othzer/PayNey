@@ -43,6 +43,8 @@ export function ReceiptScanner({ onScanComplete }) {
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) handleReceiptScan(file);
+          // Allow re-selecting the same file (onChange won't fire otherwise).
+          e.target.value = "";
         }}
       />
       <Button

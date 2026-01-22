@@ -5,9 +5,12 @@ import { NextResponse } from "next/server";
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/account(.*)",
+  "/accounts(.*)",
   "/transaction(.*)",
+  "/transactions(.*)",
   "/review(.*)",
   "/connect(.*)",
+  "/summary(.*)",
 ]);
 
 // Hit directly by the paired phone's bare HTTP client (OkHttp) — no browser

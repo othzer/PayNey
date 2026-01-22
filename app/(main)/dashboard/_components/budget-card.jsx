@@ -101,7 +101,7 @@ export function BudgetCard({ accountName, budget, currentExpenses, onBudgetUpdat
               </button>
             </div>
             <p className="money text-sm">
-              ${currentExpenses.toFixed(2)} of ${budget.amount.toFixed(2)} &middot;{" "}
+              ₹{currentExpenses.toFixed(2)} of ₹{budget.amount.toFixed(2)} &middot;{" "}
               {percentUsed.toFixed(0)}% used
             </p>
           </div>

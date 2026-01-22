@@ -64,7 +64,7 @@ function AccountCard({ account, isSelected, onSelect, onDefaultChanged }) {
           disabled={loading}
         />
       </div>
-      <p className="money text-xl">${account.balance.toFixed(2)}</p>
+      <p className="money text-xl">₹{account.balance.toFixed(2)}</p>
       <p className="text-xs text-muted-foreground">
         {account.type.charAt(0) + account.type.slice(1).toLowerCase()} account
       </p>

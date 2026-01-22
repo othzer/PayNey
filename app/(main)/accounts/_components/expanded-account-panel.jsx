@@ -34,7 +34,7 @@ export function ExpandedAccountPanel({
           </div>
 
           <div className="flex items-center gap-3">
-            <p className="money text-2xl">${account.balance.toFixed(2)}</p>
+            <p className="money text-2xl">₹{account.balance.toFixed(2)}</p>
             <AccountMenu
               account={account}
               onUpdated={onAccountUpdated}

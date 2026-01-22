@@ -150,8 +150,8 @@ export function FiltersPanel({
               onValueChange={setAmount}
             />
             <div className="mt-2 flex items-center justify-between">
-              <span className="money text-sm">${amount[0].toFixed(2)}</span>
-              <span className="money text-sm">${amount[1].toFixed(2)}</span>
+              <span className="money text-sm">₹{amount[0].toFixed(2)}</span>
+              <span className="money text-sm">₹{amount[1].toFixed(2)}</span>
             </div>
           </div>
 
