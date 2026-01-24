@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Wallet,
   ArrowLeftRight,
+  HandCoins,
   ClipboardCheck,
   Sparkles,
   Smartphone,
@@ -29,11 +30,12 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/accounts", label: "Accounts", icon: Wallet },
   { href: "/transactions", label: "Transactions", icon: ArrowLeftRight },
+  { href: "/loans", label: "Loans", icon: HandCoins, badgeKey: "loans" },
   {
     href: "/review",
     label: "Review",
     icon: ClipboardCheck,
-    showBadge: true,
+    badgeKey: "review",
   },
   { href: "/summary", label: "AI Summary", icon: Sparkles },
   { href: "/connect", label: "Connect", icon: Smartphone },
@@ -41,7 +43,8 @@ const NAV_ITEMS = [
 
 const STORAGE_KEY = "payney:sidebar-collapsed";
 
-export default function Sidebar({ pendingReviewCount = 0 }) {
+export default function Sidebar({ pendingReviewCount = 0, overdueLoanCount = 0 }) {
+  const badgeCounts = { review: pendingReviewCount, loans: overdueLoanCount };
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
@@ -130,9 +133,10 @@ export default function Sidebar({ pendingReviewCount = 0 }) {
         </div>
 
         <nav className="flex-1 space-y-1 px-2">
-          {NAV_ITEMS.map(({ href, label, icon: Icon, showBadge }) => {
+          {NAV_ITEMS.map(({ href, label, icon: Icon, badgeKey }) => {
             const active = pathname === href || pathname?.startsWith(`${href}/`);
-            const hasBadge = showBadge && pendingReviewCount > 0;
+            const badgeCount = badgeKey ? badgeCounts[badgeKey] : 0;
+            const hasBadge = badgeCount > 0;
 
             const link = (
               <Link
@@ -149,7 +153,7 @@ export default function Sidebar({ pendingReviewCount = 0 }) {
                 {!collapsed && <span className="flex-1">{label}</span>}
                 {!collapsed && hasBadge && (
                   <span className="rounded-full bg-destructive px-1.5 py-0.5 text-[10px] font-semibold text-destructive-foreground">
-                    {pendingReviewCount}
+                    {badgeCount}
                   </span>
                 )}
                 {collapsed && hasBadge && (
