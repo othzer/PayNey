@@ -11,12 +11,11 @@ import {
   serializeLoan,
   serializeRepayment,
 } from "@/lib/loans";
+import { getOrCreateUser } from "@/lib/checkUser";
 
 async function getCurrentUser() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-  const user = await db.user.findUnique({ where: { clerkUserId: userId } });
-  if (!user) throw new Error("User not found");
+  const user = await getOrCreateUser();
+  if (!user) throw new Error("Unauthorized");
   return user;
 }
 
