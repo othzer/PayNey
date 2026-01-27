@@ -28,7 +28,7 @@ import { Switch } from "@/components/ui/switch";
 import { createAccount } from "@/actions/dashboard";
 import { accountSchema } from "@/app/lib/schema";
 
-export function CreateAccountDrawer({ children }) {
+export function CreateAccountDrawer({ children, onCreated }) {
   const [open, setOpen] = useState(false);
   const {
     register,
@@ -59,8 +59,9 @@ export function CreateAccountDrawer({ children }) {
   };
 
   useEffect(() => {
-    if (newAccount) {
+    if (newAccount?.success) {
       toast.success("Account created successfully");
+      onCreated?.(newAccount.data);
       reset();
       setOpen(false);
     }
