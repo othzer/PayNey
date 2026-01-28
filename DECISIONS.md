@@ -86,3 +86,47 @@ safe and consistent with how everything else got there.
 `lib/utils.js` — ~18 files already duplicated it inline and Loans added ~15 more
 call sites. Guards NaN/null → `₹0.00`. Reduces the `$`-vs-`₹` class of bug found
 earlier.
+
+## Loans — review follow-ups
+
+**Overdue is IST-aware, and "due today" is not overdue.** `isOverdue` (the single
+copy in `lib/loan-display.js`) and the two server-side overdue queries
+(`getLoanDashboardTiles`, `getOverdueLoanCount`) all compare `dueOn` against
+`istStartOfToday()` — the start of the current day in IST (fixed UTC+5:30, India
+has no DST), expressed as a UTC instant. A loan due today therefore only becomes
+overdue tomorrow. A plain `dueOn < new Date()` (previous behaviour) marked a
+loan overdue for the whole of its due day; a naive server-local start-of-day
+wouldn't have fixed it either, because a due date is stored as *IST* midnight —
+hence the explicit IST math. This is the one spot that does tz arithmetic; the
+rest of the app's date boundaries remain server-local, which is acceptable
+because loans are the only place a same-day boundary is user-visible.
+
+**Repayments lock the loan row (`SELECT … FOR UPDATE`).** `createRepayment`
+takes a row lock at the top of its transaction so concurrent writes serialize.
+Without it, two racing repayments (realistically a double-submit) both read the
+same `repaidAmount`, both pass the overpayment guard against the same stale
+balance, and both insert — overpaying the loan. Raw SQL because Prisma's query
+builder has no `FOR UPDATE`. The recompute-from-sum already kept `repaidAmount`
+itself correct; the lock is what keeps the *overpayment guard* honest.
+
+**Public ledger really shows no notes.** `getPublicLoan` now omits both the loan
+`note` and per-repayment `note` (they were being returned and rendered, which
+contradicted this file). Notes are free-text the owner may have written as
+private memos, so they stay in the authed views only — the public page shows
+amounts, dates, status, and repayment amounts/dates.
+
+**Public share links require `NEXT_PUBLIC_APP_URL` in production.** `getBaseUrl`
+throws in production if it's unset rather than falling back to the request's
+`Host`/`X-Forwarded-Host` — a spoofed Host could otherwise put an
+attacker-controlled origin into the ledger link a user sends to someone else.
+The header fallback is dev-only. **Deploy note: set `NEXT_PUBLIC_APP_URL` to the
+canonical origin (e.g. `https://payney.app`) or loan detail pages will 500.**
+
+**Skipped (from review):** (1) *Recording the nudge as "sent" before delivery* —
+`wa.me` deep links give no send/delivery callback, so a confirmed-send signal is
+unobservable; the log records the user-initiated attempt, the UI says "nudged"
+(not "sent"/"delivered"), and DECISIONS already frames it as informational. (2)
+*Composite `(loanId, userId)` FK on Repayment/ReminderLog* — the denormalized
+`userId` is only ever written from the loan owner in `createRepayment`/`logNudge`,
+and the pattern matches the existing `Transaction`/`Account` denormalization
+(which also has no composite FK). Not worth a migration pre-deploy.

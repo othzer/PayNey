@@ -12,6 +12,7 @@ import {
   serializeRepayment,
 } from "@/lib/loans";
 import { getOrCreateUser } from "@/lib/checkUser";
+import { istStartOfToday } from "@/lib/loan-display";
 
 async function getCurrentUser() {
   const user = await getOrCreateUser();
@@ -70,7 +71,9 @@ export async function getLoanDashboardTiles() {
     where: {
       userId: user.id,
       status: { not: "SETTLED" },
-      dueOn: { lt: new Date() },
+      // Overdue = due date strictly before today (IST); "due today" isn't
+      // overdue. Same rule as isOverdue() so tiles and badges agree.
+      dueOn: { lt: istStartOfToday() },
     },
   });
 
@@ -92,7 +95,8 @@ export async function getOverdueLoanCount() {
     where: {
       userId: user.id,
       status: { not: "SETTLED" },
-      dueOn: { lt: new Date() },
+      // Match isOverdue(): strictly before start of today (IST).
+      dueOn: { lt: istStartOfToday() },
     },
   });
 }
@@ -132,7 +136,9 @@ export async function getCounterpartyDetail(counterpartyId) {
 // Public, unauthenticated. Returns a redacted shape or null (page calls
 // notFound()). Exposes only what the counterparty should see — amounts, dates,
 // status, repayment history, owner name, their own name. No userId, no
-// publicToken, no phone, no other loans.
+// publicToken, no phone, no other loans, and NO notes: loan/repayment notes are
+// free-text the owner may have written as private memos, so they never leave
+// the authed views (this matches the "no notes" guarantee in DECISIONS.md).
 export async function getPublicLoan(publicToken) {
   if (!publicToken || typeof publicToken !== "string") return null;
 
@@ -151,7 +157,6 @@ export async function getPublicLoan(publicToken) {
     principalAmount: loan.principalAmount.toNumber(),
     repaidAmount: loan.repaidAmount.toNumber(),
     status: loan.status,
-    note: loan.note,
     dueOn: loan.dueOn,
     createdAt: loan.createdAt,
     ownerName: loan.user?.name || "A PayNey user",
@@ -160,7 +165,6 @@ export async function getPublicLoan(publicToken) {
       id: r.id,
       amount: r.amount.toNumber(),
       paidOn: r.paidOn,
-      note: r.note,
     })),
   };
 }
@@ -297,6 +301,18 @@ export async function createRepayment(loanId, data) {
     const note = data.note?.trim() || null;
 
     const result = await db.$transaction(async (tx) => {
+      // Lock the loan row for the life of the transaction so concurrent
+      // repayments serialize. Without it, two racing writes (e.g. a double
+      // submit) both read the same repaidAmount, both pass the overpayment
+      // guard against the same stale balance, and both insert — overpaying the
+      // loan. Prisma has no FOR UPDATE in the query builder, hence raw SQL;
+      // the second transaction blocks here until the first commits, then reads
+      // the updated balance and is correctly rejected.
+      const locked = await tx.$queryRaw`
+        SELECT id FROM loans WHERE id = ${loanId} AND "userId" = ${user.id} FOR UPDATE
+      `;
+      if (!locked || locked.length === 0) throw new Error("Loan not found");
+
       const loan = await tx.loan.findFirst({
         where: { id: loanId, userId: user.id },
       });

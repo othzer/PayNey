@@ -99,9 +99,6 @@ export default async function PublicLoanPage({ params }) {
               </span>
             </p>
           )}
-          {loan.note && (
-            <p className="mt-2 text-sm text-foreground">{loan.note}</p>
-          )}
         </div>
 
         <div className="mt-6 rounded-2xl border border-border bg-card p-5 card-lifted">
@@ -119,9 +116,6 @@ export default async function PublicLoanPage({ params }) {
                     <p className="text-sm text-foreground">
                       {format(new Date(r.paidOn), "MMM d, yyyy")}
                     </p>
-                    {r.note && (
-                      <p className="text-xs text-muted-foreground">{r.note}</p>
-                    )}
                   </div>
                   <p className="money text-sm text-green-400">
                     {formatMoney(r.amount)}

@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getCounterparties } from "@/actions/counterparties";
 import { getLoan } from "@/actions/loans";
 import { LoanForm } from "../_components/loan-form";
@@ -10,6 +11,11 @@ export default async function NewOrEditLoanPage({ searchParams }) {
     getCounterparties(),
     editId ? getLoan(editId) : Promise.resolve(null),
   ]);
+
+  // An edit link for a loan that doesn't exist (or isn't the user's) would
+  // otherwise render a broken edit form that crashes on submit (initialData.id
+  // is null). 404 instead.
+  if (editId && !initialData) notFound();
 
   return (
     <div className="mx-auto max-w-2xl">
