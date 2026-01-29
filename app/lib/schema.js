@@ -38,3 +38,34 @@ export const transactionSchema = z
       });
     }
   });
+
+const positiveAmount = z
+  .string()
+  .min(1, "Amount is required")
+  .refine(
+    (v) => Number.isFinite(parseFloat(v)) && parseFloat(v) > 0,
+    "Amount must be a positive number"
+  );
+
+export const counterpartySchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  // Optional, but if provided must normalize to a valid Indian mobile number —
+  // the form validates via normalizePhone before submit (a bad number fails
+  // silently in wa.me, so it's caught here rather than at click time).
+  phone: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+export const loanSchema = z.object({
+  counterpartyId: z.string().min(1, "Choose who this is with"),
+  direction: z.enum(["LENT", "BORROWED"]),
+  principalAmount: positiveAmount,
+  note: z.string().optional(),
+  dueOn: z.date().optional().nullable(),
+});
+
+export const repaymentSchema = z.object({
+  amount: positiveAmount,
+  paidOn: z.date({ required_error: "Date is required" }),
+  note: z.string().optional(),
+});

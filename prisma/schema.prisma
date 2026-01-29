@@ -21,6 +21,10 @@ model User {
   merchantCategoryMaps MerchantCategoryMap[]
   pairingCodes         PairingCode[]
   devices              Device[]
+  counterparties       Counterparty[]
+  loans                Loan[]
+  repayments           Repayment[]
+  reminderLogs         ReminderLog[]
   lastCaptureSyncAt    DateTime?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
@@ -142,6 +146,102 @@ model Device {
 
   @@index([userId])
   @@map("devices")
+}
+
+model Counterparty {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  phone     String? // normalized E.164-ish, e.g. +919876543210
+  notes     String?
+  loans     Loan[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("counterparties")
+}
+
+model Loan {
+  id               String        @id @default(cuid())
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  counterpartyId   String
+  // No onDelete override -> defaults to RESTRICT, so the DB itself refuses to
+  // delete a Counterparty with existing loans. The app also pre-checks this
+  // (see actions/counterparties.js) to return a friendly error instead of a
+  // raw FK-violation.
+  counterparty     Counterparty  @relation(fields: [counterpartyId], references: [id])
+  direction        LoanDirection
+  principalAmount  Decimal
+  // Denormalized cache for cheap list queries — recomputed from the sum of
+  // Repayment rows inside the same transaction as every repayment write.
+  // Never trust this as an independent source of truth.
+  repaidAmount     Decimal       @default(0)
+  // Derived (OPEN/PARTIALLY_REPAID/SETTLED from repaid-vs-principal), stored
+  // for cheap filtering, but auto-maintained — never set directly by the UI.
+  // OVERDUE is deliberately NOT a stored status: it's computed at read time
+  // from dueOn so it can't go stale without a cron.
+  status           LoanStatus    @default(OPEN)
+  note             String?
+  dueOn            DateTime?
+  remindersEnabled Boolean       @default(true) // schema seam, not read yet
+  lastNudgedAt     DateTime? // set by the manual WhatsApp nudge action
+  publicToken      String        @unique // crypto-random, unhashed — a read-only capability link, like PairingCode.code
+  repayments       Repayment[]
+  reminderLogs     ReminderLog[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([userId, counterpartyId])
+  @@index([userId, status])
+  @@map("loans")
+}
+
+model Repayment {
+  id        String   @id @default(cuid())
+  loanId    String
+  loan      Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  // Denormalized, mirrors Transaction carrying both userId and accountId —
+  // lets every query scope by userId directly without an extra join.
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Decimal
+  paidOn    DateTime @default(now())
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([loanId])
+  @@index([userId])
+  @@map("repayments")
+}
+
+model ReminderLog {
+  id        String   @id @default(cuid())
+  loanId    String
+  loan      Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Manual nudges always use a fresh key (never blocks a repeat send) — this
+  // is a seam for a future automated-reminder cron's deterministic per-day key.
+  dedupeKey String   @unique
+  channel   String // "whatsapp_manual" for now
+  sentAt    DateTime @default(now())
+
+  @@index([loanId])
+  @@map("reminder_logs")
+}
+
+enum LoanDirection {
+  LENT
+  BORROWED
+}
+
+enum LoanStatus {
+  OPEN
+  PARTIALLY_REPAID
+  SETTLED
 }
 
 enum TransactionType {
