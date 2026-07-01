@@ -154,3 +154,18 @@ export async function getDashboardData() {
 
   return transactions.map(serializeTransaction);
 }
+
+export async function getPendingReviewCount() {
+  const { userId } = await auth();
+  if (!userId) return 0;
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) return 0;
+
+  return db.transaction.count({
+    where: { userId: user.id, status: "PENDING" },
+  });
+}

@@ -55,7 +55,27 @@ html {
   .brand-glow {
     box-shadow: 0 0 28px rgba(34, 47, 168, 0.4);
   }
-  .lifted {
+  .lifted,
+  .card-lifted {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  }
+  .money {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .delta-positive,
+  .delta-negative,
+  .delta-neutral {
+    @apply inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-medium;
+  }
+  .delta-positive {
+    @apply bg-green-500/10 text-green-400;
+  }
+  .delta-negative {
+    @apply bg-red-500/10 text-red-400;
+  }
+  .delta-neutral {
+    @apply bg-muted text-muted-foreground;
   }
 }
