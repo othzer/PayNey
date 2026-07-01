@@ -3,11 +3,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getGeminiModel, cleanJsonResponse } from "@/lib/gemini";
 import aj from "@/lib/arcjet";
 import { request } from "@arcjet/next";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const serializeAmount = (obj) => ({
   ...obj,
@@ -317,7 +315,7 @@ export async function getTransactionAmountRange({ accountId } = {}) {
 // Scan Receipt
 export async function scanReceipt(file) {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = getGeminiModel();
 
     // Convert File to ArrayBuffer
     const arrayBuffer = await file.arrayBuffer();
@@ -356,7 +354,7 @@ export async function scanReceipt(file) {
 
     const response = await result.response;
     const text = response.text();
-    const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
+    const cleanedText = cleanJsonResponse(text);
 
     try {
       const data = JSON.parse(cleanedText);
