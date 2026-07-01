@@ -227,6 +227,93 @@ export async function getUserTransactions(query = {}) {
   }
 }
 
+// Get transactions across accounts, scoped by date range, account, search, and filters
+export async function getFilteredTransactions(params = {}) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const {
+    from,
+    to,
+    accountId,
+    search,
+    categories,
+    types,
+    recurring,
+    amountMin,
+    amountMax,
+  } = params;
+
+  const where = { userId: user.id };
+
+  if (accountId) where.accountId = accountId;
+  if (from && to) where.date = { gte: from, lte: to };
+  if (search) where.description = { contains: search, mode: "insensitive" };
+  if (categories?.length) where.category = { in: categories };
+  if (types?.length === 1) where.type = types[0];
+  if (recurring?.length === 1) {
+    where.isRecurring = recurring[0] === "recurring";
+  }
+  if (amountMin !== undefined || amountMax !== undefined) {
+    where.amount = {};
+    if (amountMin !== undefined) where.amount.gte = amountMin;
+    if (amountMax !== undefined) where.amount.lte = amountMax;
+  }
+
+  const transactions = await db.transaction.findMany({
+    where,
+    orderBy: { date: "desc" },
+  });
+
+  const serialized = transactions.map(serializeAmount);
+
+  const summary = serialized.reduce(
+    (acc, t) => {
+      if (t.type === "INCOME") acc.income += t.amount;
+      else acc.expense += t.amount;
+      return acc;
+    },
+    { income: 0, expense: 0 }
+  );
+
+  return {
+    transactions: serialized,
+    summary: { ...summary, net: summary.income - summary.expense },
+  };
+}
+
+// Min/max transaction amount for the given account scope (all accounts if omitted)
+export async function getTransactionAmountRange({ accountId } = {}) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const where = { userId: user.id };
+  if (accountId) where.accountId = accountId;
+
+  const result = await db.transaction.aggregate({
+    where,
+    _min: { amount: true },
+    _max: { amount: true },
+  });
+
+  return {
+    min: result._min.amount ? result._min.amount.toNumber() : 0,
+    max: result._max.amount ? result._max.amount.toNumber() : 5000,
+  };
+}
+
 // Scan Receipt
 export async function scanReceipt(file) {
   try {

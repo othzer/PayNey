@@ -35,7 +35,12 @@ const categoryById = defaultCategories.reduce((acc, c) => {
 
 const PAGE_SIZE = 15;
 
-export function AccountTransactionsTable({ transactions, onTransactionDeleted }) {
+export function TransactionTable({
+  transactions,
+  onTransactionDeleted,
+  hideInlineToolbar = false,
+  emptyStateMessage = "No transactions yet",
+}) {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
@@ -120,7 +125,7 @@ export function AccountTransactionsTable({ transactions, onTransactionDeleted })
     return (
       <div className="rounded-2xl border border-border bg-card p-10 card-lifted">
         <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <p className="text-sm text-muted-foreground">No transactions yet</p>
+          <p className="text-sm text-muted-foreground">{emptyStateMessage}</p>
           <Button asChild size="sm">
             <Link href="/transaction/create">Add transaction</Link>
           </Button>
@@ -146,40 +151,42 @@ export function AccountTransactionsTable({ transactions, onTransactionDeleted })
           </button>
         </div>
       ) : (
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search transactions…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-8"
-            />
+        !hideInlineToolbar && (
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search transactions…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="All types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All types</SelectItem>
+                <SelectItem value="INCOME">Income</SelectItem>
+                <SelectItem value="EXPENSE">Expense</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="All categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All categories</SelectItem>
+                {categoryOptions.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="All types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All types</SelectItem>
-              <SelectItem value="INCOME">Income</SelectItem>
-              <SelectItem value="EXPENSE">Expense</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="All categories" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All categories</SelectItem>
-              {categoryOptions.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        )
       )}
 
       <div className="mt-4 overflow-x-auto">
