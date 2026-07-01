@@ -1,17 +1,17 @@
 import { getPendingTransactions } from "@/actions/review";
-import { getCaptureSyncStatus } from "@/actions/capture";
+import { getCaptureConnectionStatus } from "@/actions/capture";
 import { ReviewClient } from "./_components/review-client";
 
 export default async function ReviewPage() {
-  const [pendingTransactions, { lastCaptureSyncAt }] = await Promise.all([
+  const [pendingTransactions, { hasDevice, lastCaptureSyncAt }] = await Promise.all([
     getPendingTransactions(),
-    getCaptureSyncStatus(),
+    getCaptureConnectionStatus(),
   ]);
 
   return (
     <ReviewClient
       initialTransactions={pendingTransactions}
-      hasEverConnected={Boolean(lastCaptureSyncAt)}
+      hasEverConnected={hasDevice || Boolean(lastCaptureSyncAt)}
     />
   );
 }
