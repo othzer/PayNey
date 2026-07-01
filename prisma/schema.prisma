@@ -19,6 +19,8 @@ model User {
   budgets              Budget[]
   pendingTransactions  PendingTransaction[]
   merchantCategoryMaps MerchantCategoryMap[]
+  pairingCodes         PairingCode[]
+  devices              Device[]
   lastCaptureSyncAt    DateTime?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
@@ -113,6 +115,33 @@ model MerchantCategoryMap {
 
   @@unique([userId, merchantPattern])
   @@map("merchant_category_maps")
+}
+
+model PairingCode {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code      String    @unique // short, human-typeable
+  expiresAt DateTime // ~10 minutes from creation
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([code])
+  @@map("pairing_codes")
+}
+
+model Device {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique // HMAC of the device token — never the raw token
+  label      String? // e.g. "Android capture app"
+  createdAt  DateTime  @default(now())
+  lastSeenAt DateTime?
+  revoked    Boolean   @default(false)
+
+  @@index([userId])
+  @@map("devices")
 }
 
 enum TransactionType {
