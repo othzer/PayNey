@@ -20,7 +20,7 @@ export function BudgetCard({ accountName, budget, currentExpenses, onBudgetUpdat
     error,
   } = useFetch(updateBudget);
 
-  const percentUsed = budget ? (currentExpenses / budget.amount) * 100 : 0;
+  const percentUsed = budget?.amount ? (currentExpenses / budget.amount) * 100 : 0;
 
   const handleSave = async () => {
     const amount = parseFloat(newBudget);
@@ -31,16 +31,25 @@ export function BudgetCard({ accountName, budget, currentExpenses, onBudgetUpdat
     await updateBudgetFn(amount);
   };
 
+  const handleEditClick = () => {
+    setNewBudget(budget?.amount?.toString() || "");
+    setIsEditing(true);
+  };
+
   const handleCancel = () => {
     setNewBudget(budget?.amount?.toString() || "");
     setIsEditing(false);
   };
 
   useEffect(() => {
-    if (updatedBudget?.success) {
+    if (!updatedBudget) return;
+
+    if (updatedBudget.success) {
       setIsEditing(false);
       toast.success("Budget updated successfully");
       onBudgetUpdated?.(updatedBudget.data);
+    } else {
+      toast.error(updatedBudget.error || "Failed to update budget");
     }
   }, [updatedBudget]);
 
@@ -93,7 +102,7 @@ export function BudgetCard({ accountName, budget, currentExpenses, onBudgetUpdat
                 Monthly budget &middot; {accountName}
               </p>
               <button
-                onClick={() => setIsEditing(true)}
+                onClick={handleEditClick}
                 className="text-muted-foreground hover:text-foreground"
                 aria-label="Edit budget"
               >
@@ -120,7 +129,7 @@ export function BudgetCard({ accountName, budget, currentExpenses, onBudgetUpdat
           <p className="text-sm text-muted-foreground">
             No budget set for {accountName}
           </p>
-          <Button size="sm" onClick={() => setIsEditing(true)}>
+          <Button size="sm" onClick={handleEditClick}>
             Set budget
           </Button>
         </div>
