@@ -1,8 +1,8 @@
 "use client";
 
 import { CashFlowChart } from "@/components/cash-flow-chart";
+import { TransactionTable } from "@/components/transaction-table";
 import { AccountMenu } from "./account-menu";
-import { AccountTransactionsTable } from "./account-transactions-table";
 
 export function ExpandedAccountPanel({
   account,
@@ -46,7 +46,8 @@ export function ExpandedAccountPanel({
 
       <CashFlowChart transactions={transactions} title="Transaction overview" />
 
-      <AccountTransactionsTable
+      <TransactionTable
+        key={account.id}
         transactions={transactions}
         onTransactionDeleted={onTransactionDeleted}
       />
