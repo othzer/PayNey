@@ -59,6 +59,26 @@ export function AccountsClient({
   };
 
   const handleTransactionDeleted = (id) => {
+    const deleted = txList.find((t) => t.id === id);
+    if (deleted) {
+      setAccounts((current) =>
+        current.map((a) => {
+          if (a.id !== deleted.accountId) return a;
+          const balanceChange =
+            deleted.type === "EXPENSE" ? deleted.amount : -deleted.amount;
+          return {
+            ...a,
+            balance: a.balance + balanceChange,
+            _count: a._count
+              ? {
+                  ...a._count,
+                  transactions: Math.max(0, a._count.transactions - 1),
+                }
+              : a._count,
+          };
+        })
+      );
+    }
     setTxList((current) => current.filter((t) => t.id !== id));
   };
 

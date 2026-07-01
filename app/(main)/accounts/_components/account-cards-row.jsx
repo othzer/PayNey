@@ -60,6 +60,7 @@ function AccountCard({ account, isSelected, onSelect, onDefaultChanged }) {
         <Switch
           checked={account.isDefault}
           onClick={handleToggleDefault}
+          onKeyDown={(e) => e.stopPropagation()}
           disabled={loading}
         />
       </div>

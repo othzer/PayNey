@@ -47,6 +47,7 @@ export function ExpandedAccountPanel({
       <CashFlowChart transactions={transactions} title="Transaction overview" />
 
       <AccountTransactionsTable
+        key={account.id}
         transactions={transactions}
         onTransactionDeleted={onTransactionDeleted}
       />
