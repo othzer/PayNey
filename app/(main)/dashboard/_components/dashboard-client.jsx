@@ -15,7 +15,7 @@ import { defaultCategories } from "@/data/categories";
 import { AccountSwitcher } from "./account-switcher";
 import { OverviewCard } from "./overview-card";
 import { BudgetCard } from "./budget-card";
-import { CashFlowCard } from "./cash-flow-card";
+import { CashFlowChart } from "@/components/cash-flow-chart";
 import { SpendHeatmap } from "./spend-heatmap";
 import { TopCategoriesCard } from "./top-categories-card";
 import { RecentTransactionsCard } from "./recent-transactions-card";
@@ -61,6 +61,7 @@ export function DashboardClient({
     () => accounts.find((a) => a.isDefault)?.id || accounts[0]?.id
   );
   const [budget, setBudget] = useState(initialBudget);
+  const [txList, setTxList] = useState(transactions);
 
   const selectedAccount = useMemo(
     () => accounts.find((a) => a.id === selectedAccountId),
@@ -68,9 +69,13 @@ export function DashboardClient({
   );
 
   const accountTransactions = useMemo(
-    () => transactions.filter((t) => t.accountId === selectedAccountId),
-    [transactions, selectedAccountId]
+    () => txList.filter((t) => t.accountId === selectedAccountId),
+    [txList, selectedAccountId]
   );
+
+  const handleTransactionDeleted = (id) => {
+    setTxList((current) => current.filter((t) => t.id !== id));
+  };
 
   const stats = useMemo(() => {
     const now = new Date();
@@ -180,11 +185,14 @@ export function DashboardClient({
             onBudgetUpdated={setBudget}
           />
 
-          <RecentTransactionsCard transactions={accountTransactions} />
+          <RecentTransactionsCard
+            transactions={accountTransactions}
+            onTransactionDeleted={handleTransactionDeleted}
+          />
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
             <div className="space-y-6">
-              <CashFlowCard transactions={accountTransactions} />
+              <CashFlowChart transactions={accountTransactions} />
               <SpendHeatmap transactions={accountTransactions} />
             </div>
             <div className="space-y-6">
