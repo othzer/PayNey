@@ -103,7 +103,7 @@ export async function bulkDeleteTransactions(transactionIds) {
     });
 
     revalidatePath("/dashboard");
-    revalidatePath("/account/[id]");
+    revalidatePath("/accounts");
 
     return { success: true };
   } catch (error) {
@@ -143,7 +143,79 @@ export async function updateDefaultAccount(accountId) {
     });
 
     revalidatePath("/dashboard");
-    return { success: true, data: serializeTransaction(account) };
+    revalidatePath("/accounts");
+    return { success: true, data: serializeDecimal(account) };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function updateAccount(accountId, data) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    const updateData = {};
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.type !== undefined) updateData.type = data.type;
+
+    const account = await db.account.update({
+      where: { id: accountId, userId: user.id },
+      data: updateData,
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/accounts");
+    return { success: true, data: serializeDecimal(account) };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteAccount(accountId) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    const account = await db.account.findUnique({
+      where: { id: accountId, userId: user.id },
+    });
+
+    if (!account) throw new Error("Account not found");
+
+    // Transactions on this account are removed automatically (onDelete: Cascade)
+    await db.account.delete({ where: { id: accountId, userId: user.id } });
+
+    let newDefaultAccountId = null;
+    if (account.isDefault) {
+      const nextDefault = await db.account.findFirst({
+        where: { userId: user.id },
+        orderBy: { createdAt: "desc" },
+      });
+      if (nextDefault) {
+        await db.account.update({
+          where: { id: nextDefault.id },
+          data: { isDefault: true },
+        });
+        newDefaultAccountId = nextDefault.id;
+      }
+    }
+
+    revalidatePath("/dashboard");
+    revalidatePath("/accounts");
+    return { success: true, newDefaultAccountId };
   } catch (error) {
     return { success: false, error: error.message };
   }

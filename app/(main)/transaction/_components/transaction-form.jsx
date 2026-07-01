@@ -116,7 +116,7 @@ export function AddTransactionForm({
           : "Transaction created successfully"
       );
       reset();
-      router.push(`/account/${transactionResult.data.accountId}`);
+      router.push("/accounts");
     }
   }, [transactionResult, transactionLoading, editMode]);
 
