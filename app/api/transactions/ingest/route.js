@@ -71,6 +71,10 @@ export async function POST(req) {
   });
 
   if (duplicate) {
+    await db.user.update({
+      where: { id: user.id },
+      data: { lastCaptureSyncAt: new Date() },
+    });
     return NextResponse.json({ status: "duplicate", skipped: true }, { status: 200 });
   }
 
@@ -96,6 +100,11 @@ export async function POST(req) {
       confidence,
       status: "pending",
     },
+  });
+
+  await db.user.update({
+    where: { id: user.id },
+    data: { lastCaptureSyncAt: new Date() },
   });
 
   return NextResponse.json({ status: "created", data: pendingTransaction }, { status: 201 });

@@ -5,6 +5,7 @@ import {
   CreditCard,
   Globe,
   Zap,
+  Smartphone,
 } from "lucide-react";
 
 // Stats Data
@@ -29,6 +30,14 @@ export const statsData = [
 
 // Features Data
 export const featuresData = [
+  {
+    icon: <Smartphone className="h-8 w-8 text-primary" />,
+    title: "Automatic Capture",
+    description:
+      "Reads your bank SMS and UPI app notifications and brings the transactions straight to your Review queue — no manual entry.",
+    href: "/connect",
+    linkLabel: "Learn more",
+  },
   {
     icon: <BarChart3 className="h-8 w-8 text-blue-600" />,
     title: "Advanced Analytics",

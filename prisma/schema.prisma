@@ -19,6 +19,7 @@ model User {
   budgets              Budget[]
   pendingTransactions  PendingTransaction[]
   merchantCategoryMaps MerchantCategoryMap[]
+  lastCaptureSyncAt    DateTime?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
 
