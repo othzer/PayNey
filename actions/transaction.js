@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getGeminiModel, cleanJsonResponse } from "@/lib/gemini";
+import { defaultCategories } from "@/data/categories";
 import aj from "@/lib/arcjet";
 import { request } from "@arcjet/next";
 
@@ -322,14 +323,20 @@ export async function scanReceipt(file) {
     // Convert ArrayBuffer to Base64
     const base64String = Buffer.from(arrayBuffer).toString("base64");
 
-    const prompt = `
-      Analyze this receipt image and extract the following information in JSON format:
+    const expenseCategories = defaultCategories.filter(
+      (c) => c.type === "EXPENSE"
+    );
+    const categoryList = expenseCategories
+      .map((c) => `${c.id} (${c.name})`)
+      .join(", ");
+
+    const prompt = `Analyze this receipt image and extract the following information in JSON format:
       - Total amount (just the number)
       - Date (in ISO format)
       - Description or items purchased (brief summary)
       - Merchant/store name
-      - Suggested category (one of: housing,transportation,groceries,utilities,entertainment,food,shopping,healthcare,education,personal,travel,insurance,gifts,bills,other-expense )
-      
+      - category: classify the purchase into exactly one category id from this list, based on the merchant name and items purchased: ${categoryList}. Always pick the closest match — only use "other-expense" if truly nothing else fits.
+
       Only respond with valid JSON in this exact format:
       {
         "amount": number,
@@ -358,11 +365,14 @@ export async function scanReceipt(file) {
 
     try {
       const data = JSON.parse(cleanedText);
+      const matchedCategory = expenseCategories.find(
+        (c) => c.id === data.category
+      );
       return {
         amount: parseFloat(data.amount),
         date: new Date(data.date),
         description: data.description,
-        category: data.category,
+        category: matchedCategory?.id || "other-expense",
         merchantName: data.merchantName,
       };
     } catch (parseError) {
