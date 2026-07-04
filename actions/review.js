@@ -56,7 +56,11 @@ export async function confirmPendingTransaction(id, overrides = {}) {
     }
 
     const accountId = await getDefaultAccountId(user.id);
-    const type = pending.parsedDirection === "credit" ? "INCOME" : "EXPENSE";
+    const direction =
+      overrides.direction === "credit" || overrides.direction === "debit"
+        ? overrides.direction
+        : pending.parsedDirection;
+    const type = direction === "credit" ? "INCOME" : "EXPENSE";
     const category = overrides.category || pending.suggestedCategory || "other-expense";
     const description =
       overrides.name || pending.suggestedName || pending.parsedMerchant || undefined;
@@ -106,7 +110,10 @@ export async function confirmPendingTransaction(id, overrides = {}) {
     revalidatePath("/accounts");
     revalidatePath("/transactions");
 
-    return { success: true, data: transaction };
+    return {
+      success: true,
+      data: { ...transaction, amount: transaction.amount.toNumber() },
+    };
   } catch (error) {
     return { success: false, error: error.message };
   }

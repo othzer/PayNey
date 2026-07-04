@@ -43,19 +43,17 @@ const Navbar = () => {
           {/* Pill 1: logo mark */}
           <Link
             href="/"
-            className="lifted flex h-12 w-12 shrink-0 items-center justify-center rounded-md border border-border bg-card"
+            className="lifted flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl"
             aria-label="PayNey home"
           >
-            {/* <span className="h-5 w-5 rounded-sm bg-primary" /> */}
             <Image
               src="/payney-logomark.svg"
-              alt=""
-              width={5}
-              height={5}
-              className="h-full w-full object-cover"
+              alt="PayNey"
+              width={48}
+              height={48}
+              className="h-full w-full object-contain"
               priority
             />
-            {/* <img src="/payney-logomark.svg" alt="PayNey Logo" className="h-5 w-5 rounded-sm bg-primary" /> */}
           </Link>
 
           {/* Pill 2: nav links */}

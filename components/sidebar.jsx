@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -73,7 +74,14 @@ export default function Sidebar({ pendingReviewCount = 0 }) {
             className="flex items-center gap-2 overflow-hidden"
             aria-label="PayNey"
           >
-            <span className="h-6 w-6 shrink-0 rounded-sm bg-primary" />
+            <Image
+              src="/payney-logomark.svg"
+              alt="PayNey"
+              width={24}
+              height={24}
+              className="h-6 w-6 shrink-0 rounded-md object-contain"
+              priority
+            />
             {!collapsed && (
               <span className="font-display text-sm font-semibold text-foreground">
                 PayNey
