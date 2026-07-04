@@ -10,6 +10,20 @@ const isProtectedRoute = createRouteMatcher([
   "/connect(.*)",
 ]);
 
+// Hit directly by the paired phone's bare HTTP client (OkHttp) — no browser
+// fingerprint, no Clerk session cookie. Arcjet's bot detection would otherwise
+// flag these as automated traffic and reject them with a 403 before the route
+// handler runs. They are NOT unauthenticated: /api/device/pair is gated by the
+// one-time pairing code in its body, and the transaction endpoints require a
+// Bearer device token (or a Clerk session) via resolveRequestUser. Shield still
+// runs on all of them below; only the bot fingerprint check is dropped.
+const isDeviceClientRoute = createRouteMatcher([
+  "/api/device/pair",
+  "/api/transactions/ingest",
+  "/api/transactions/receipt",
+  "/api/transactions/receipt/confirm",
+]);
+
 // Create Arcjet middleware
 const aj = arcjet({
   key: process.env.ARCJET_KEY,
@@ -30,6 +44,17 @@ const aj = arcjet({
   ],
 });
 
+// Same shield protection, but no bot detection — used for the device-facing
+// endpoints, which are expected to come from a non-browser client.
+const ajDeviceClient = arcjet({
+  key: process.env.ARCJET_KEY,
+  rules: [
+    shield({
+      mode: "LIVE",
+    }),
+  ],
+});
+
 // Create base Clerk middleware
 const clerk = clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
@@ -43,7 +68,15 @@ const clerk = clerkMiddleware(async (auth, req) => {
 });
 
 // Chain middlewares - ArcJet runs first, then Clerk
-export default createMiddleware(aj, clerk);
+const withFullProtection = createMiddleware(aj, clerk);
+const withDeviceClientProtection = createMiddleware(ajDeviceClient, clerk);
+
+export default function middleware(request, event) {
+  if (isDeviceClientRoute(request)) {
+    return withDeviceClientProtection(request, event);
+  }
+  return withFullProtection(request, event);
+}
 
 export const config = {
   matcher: [
