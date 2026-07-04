@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const NAV_LINKS = [
+  { id: "connect", label: "Auto Capture" },
   { id: "features", label: "Features" },
   { id: "how-it-works", label: "How it works" },
   { id: "pricing", label: "Pricing" },
@@ -41,10 +43,19 @@ const Navbar = () => {
           {/* Pill 1: logo mark */}
           <Link
             href="/"
-            className="lifted flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border bg-card"
+            className="lifted flex h-12 w-12 shrink-0 items-center justify-center rounded-md border border-border bg-card"
             aria-label="PayNey home"
           >
-            <span className="h-5 w-5 rounded-sm bg-primary" />
+            {/* <span className="h-5 w-5 rounded-sm bg-primary" /> */}
+            <Image
+              src="/payney-logomark.svg"
+              alt=""
+              width={5}
+              height={5}
+              className="h-full w-full object-cover"
+              priority
+            />
+            {/* <img src="/payney-logomark.svg" alt="PayNey Logo" className="h-5 w-5 rounded-sm bg-primary" /> */}
           </Link>
 
           {/* Pill 2: nav links */}

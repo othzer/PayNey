@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en">
         <head>
-          <link rel="icon" href="/logo-sm.png" sizes="any" />
+          <link rel="icon" href="/payney-logomark.svg" sizes="any" />
         </head>
         <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans`}>
           <main className="min-h-screen">{children}</main>
