@@ -25,6 +25,7 @@
 *.pem
 CLAUDE.md
 /.claude/
+DECISIONS.md
 
 # debug
 npm-debug.log*

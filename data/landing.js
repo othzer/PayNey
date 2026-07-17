@@ -6,6 +6,9 @@ import {
   Globe,
   Zap,
   Smartphone,
+  HandCoins,
+  QrCode,
+  SlidersHorizontal,
 } from "lucide-react";
 
 
@@ -51,26 +54,44 @@ export const featuresData = [
     title: "Automated Insights",
     description: "Get automated financial insights and recommendations",
   },
+  {
+    icon: <HandCoins className="h-8 w-8 text-blue-600" />,
+    title: "Lending Ledger",
+    description:
+      "Track money you lend or borrow, share a public read-only link with the other person, and send a WhatsApp nudge when a repayment is due.",
+  },
 ];
 
 // How It Works Data
 export const howItWorksData = [
   {
     icon: <CreditCard className="h-8 w-8 text-blue-600" />,
-    title: "1. Create Your Account",
+    title: "1. Create an account",
     description:
-      "Get started in minutes with our simple and secure sign-up process",
+      "Sign up and add your first bank or cash account — takes under a minute, no card required.",
+  },
+  {
+    icon: <QrCode className="h-8 w-8 text-blue-600" />,
+    title: "2. Pair the Capture app (optional)",
+    description:
+      "Install the PayNey Capture Android app and scan a pairing code from Settings → Connect. It reads bank SMS and UPI notifications and scans receipt photos, dropping them into your Review queue.",
+  },
+  {
+    icon: <SlidersHorizontal className="h-8 w-8 text-blue-600" />,
+    title: "3. Review, categorize, set budgets",
+    description:
+      "Approve or edit anything captured automatically, or add transactions by hand. Set a budget per category and PayNey tracks your progress against it.",
   },
   {
     icon: <BarChart3 className="h-8 w-8 text-blue-600" />,
-    title: "2. Track Your Spending",
+    title: "4. Read your monthly AI summary",
     description:
-      "Automatically categorize and track your transactions in real-time",
+      "Every month, get a plain-language breakdown of where your money went and where you can cut back.",
   },
   {
-    icon: <PieChart className="h-8 w-8 text-blue-600" />,
-    title: "3. Get Insights",
+    icon: <HandCoins className="h-8 w-8 text-blue-600" />,
+    title: "5. Track loans on the side",
     description:
-      "Receive AI-powered insights and recommendations to optimize your finances",
+      "Log money you lend or borrow from friends and family, share a public link so they can see the balance, and nudge them on WhatsApp when it's due.",
   },
 ];
