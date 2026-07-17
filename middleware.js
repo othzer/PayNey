@@ -11,6 +11,7 @@ const isProtectedRoute = createRouteMatcher([
   "/review(.*)",
   "/connect(.*)",
   "/summary(.*)",
+  "/loans(.*)",
 ]);
 
 // Hit directly by the paired phone's bare HTTP client (OkHttp) — no browser
