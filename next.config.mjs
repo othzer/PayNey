@@ -13,6 +13,7 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: "5mb",
     },
+    nodeMiddleware: true,
   },
 };
 
