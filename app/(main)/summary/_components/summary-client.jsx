@@ -70,7 +70,7 @@ export function SummaryClient({ initialSummary }) {
               Income
             </p>
             <p className="money mt-1 text-2xl text-green-400">
-              ${summary.stats.totalIncome.toFixed(2)}
+              ₹{summary.stats.totalIncome.toFixed(2)}
             </p>
           </div>
           <div className="border-t border-border pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
@@ -78,7 +78,7 @@ export function SummaryClient({ initialSummary }) {
               Expenses
             </p>
             <p className="money mt-1 text-2xl text-red-400">
-              ${summary.stats.totalExpenses.toFixed(2)}
+              ₹{summary.stats.totalExpenses.toFixed(2)}
             </p>
           </div>
           <div className="border-t border-border pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
@@ -92,7 +92,7 @@ export function SummaryClient({ initialSummary }) {
                   : "money mt-1 text-2xl text-red-400"
               }
             >
-              {summary.stats.netIncome >= 0 ? "+" : "-"}$
+              {summary.stats.netIncome >= 0 ? "+" : "-"}₹
               {Math.abs(summary.stats.netIncome).toFixed(2)}
             </p>
           </div>
@@ -136,7 +136,7 @@ export function SummaryClient({ initialSummary }) {
                   />
                   {categoryNameById[categoryId] || categoryId}
                 </span>
-                <span className="money">${amount.toFixed(2)}</span>
+                <span className="money">₹{amount.toFixed(2)}</span>
               </li>
             ))}
           </ul>

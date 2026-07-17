@@ -48,6 +48,8 @@ export async function getUserAccounts() {
     return serializedAccounts;
   } catch (error) {
     console.error(error.message);
+    // Callers render this directly — never return undefined.
+    return [];
   }
 }
 

@@ -50,7 +50,7 @@ export function RecurringTransactionsCard({ transactions }) {
                   t.type === "INCOME" ? "text-green-400" : "text-red-400"
                 }`}
               >
-                {t.type === "INCOME" ? "+" : "-"}${t.amount.toFixed(2)}
+                {t.type === "INCOME" ? "+" : "-"}₹{t.amount.toFixed(2)}
               </span>
             </div>
           ))

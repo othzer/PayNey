@@ -61,7 +61,12 @@ export async function confirmPendingTransaction(id, overrides = {}) {
         ? overrides.direction
         : pending.parsedDirection;
     const type = direction === "credit" ? "INCOME" : "EXPENSE";
-    const category = overrides.category || pending.suggestedCategory || "other-expense";
+    // Fallback category must match the transaction type — a credit with no
+    // suggestion is "other-income", not an expense category.
+    const category =
+      overrides.category ||
+      pending.suggestedCategory ||
+      (type === "INCOME" ? "other-income" : "other-expense");
     const description =
       overrides.name || pending.suggestedName || pending.parsedMerchant || undefined;
     const amount = pending.parsedAmount;

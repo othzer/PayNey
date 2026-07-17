@@ -15,7 +15,7 @@ function DeltaPill({ value, format = "currency", positiveIsGood = true }) {
   const label =
     format === "percent"
       ? `${Math.abs(value).toFixed(0)}%`
-      : `$${Math.abs(value).toFixed(2)}`;
+      : `₹${Math.abs(value).toFixed(2)}`;
 
   return (
     <span className={className}>
@@ -45,7 +45,7 @@ export function OverviewCard({
           <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
             Balance
           </p>
-          <p className="money mt-1 text-2xl">${balance.toFixed(2)}</p>
+          <p className="money mt-1 text-2xl">₹{balance.toFixed(2)}</p>
           <div className="mt-2">
             <DeltaPill value={balanceDelta} format="currency" />
           </div>
@@ -55,7 +55,7 @@ export function OverviewCard({
           <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
             This month
           </p>
-          <p className="money mt-1 text-2xl">${thisMonthExpense.toFixed(2)}</p>
+          <p className="money mt-1 text-2xl">₹{thisMonthExpense.toFixed(2)}</p>
           <div className="mt-2">
             <DeltaPill
               value={expenseDeltaPct}
@@ -75,7 +75,7 @@ export function OverviewCard({
               netThisMonth >= 0 ? "text-green-400" : "text-red-400"
             )}
           >
-            {netThisMonth >= 0 ? "+" : "-"}${Math.abs(netThisMonth).toFixed(2)}
+            {netThisMonth >= 0 ? "+" : "-"}₹{Math.abs(netThisMonth).toFixed(2)}
           </p>
         </div>
       </div>

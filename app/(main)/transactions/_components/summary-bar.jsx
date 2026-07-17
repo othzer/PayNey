@@ -9,7 +9,7 @@ export function SummaryBar({ summary }) {
             Expense
           </p>
           <p className="money mt-1 text-xl text-red-400">
-            ${summary.expense.toFixed(2)}
+            ₹{summary.expense.toFixed(2)}
           </p>
         </div>
         <div className="border-l border-border pl-4">
@@ -17,7 +17,7 @@ export function SummaryBar({ summary }) {
             Income
           </p>
           <p className="money mt-1 text-xl text-green-400">
-            ${summary.income.toFixed(2)}
+            ₹{summary.income.toFixed(2)}
           </p>
         </div>
         <div className="border-l border-border pl-4">
@@ -29,7 +29,7 @@ export function SummaryBar({ summary }) {
               net >= 0 ? "text-green-400" : "text-red-400"
             }`}
           >
-            {net >= 0 ? "+" : "-"}${Math.abs(net).toFixed(2)}
+            {net >= 0 ? "+" : "-"}₹{Math.abs(net).toFixed(2)}
           </p>
         </div>
       </div>

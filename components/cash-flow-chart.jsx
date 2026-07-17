@@ -86,7 +86,7 @@ export function CashFlowChart({ transactions, title = "Cash flow" }) {
             />
             <Tooltip
               cursor={{ fill: "hsl(var(--secondary))" }}
-              formatter={(value) => [`$${value.toFixed(2)}`, "Net"]}
+              formatter={(value) => [`₹${value.toFixed(2)}`, "Net"]}
               contentStyle={{
                 backgroundColor: "hsl(var(--popover))",
                 border: "1px solid hsl(var(--border))",
@@ -113,7 +113,7 @@ export function CashFlowChart({ transactions, title = "Cash flow" }) {
           total >= 0 ? "text-green-400" : "text-red-400"
         }`}
       >
-        {total >= 0 ? "+" : "-"}${Math.abs(total).toFixed(2)}
+        {total >= 0 ? "+" : "-"}₹{Math.abs(total).toFixed(2)}
       </p>
     </div>
   );

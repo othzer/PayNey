@@ -67,12 +67,12 @@ export async function bulkDeleteTransactions(transactionIds) {
       },
     });
 
-    // Group transactions by account to update balances
+    // Group transactions by account to update balances. amount is a Prisma
+    // Decimal — convert to a number first, otherwise `number + Decimal`
+    // coerces to string concatenation and corrupts the balance update.
     const accountBalanceChanges = transactions.reduce((acc, transaction) => {
-      const change =
-        transaction.type === "EXPENSE"
-          ? transaction.amount
-          : -transaction.amount;
+      const amount = transaction.amount.toNumber();
+      const change = transaction.type === "EXPENSE" ? amount : -amount;
       acc[transaction.accountId] = (acc[transaction.accountId] || 0) + change;
       return acc;
     }, {});

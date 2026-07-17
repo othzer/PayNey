@@ -79,7 +79,7 @@ export function RecentTransactionsCard({ transactions, onTransactionDeleted }) {
                         t.type === "EXPENSE" ? "text-red-400" : "text-green-400"
                       }`}
                     >
-                      {t.type === "EXPENSE" ? "-" : "+"}${t.amount.toFixed(2)}
+                      {t.type === "EXPENSE" ? "-" : "+"}₹{t.amount.toFixed(2)}
                     </td>
                     <td className="py-2.5 text-right">
                       <TransactionRowActions

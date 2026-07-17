@@ -30,10 +30,12 @@ export async function getCurrentBudget(accountId) {
       currentDate.getMonth(),
       1
     );
-    const endOfMonth = new Date(
+    // Exclusive upper bound: midnight of the 1st of next month, so
+    // transactions any time on the last day of the month are included.
+    const startOfNextMonth = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + 1,
-      0
+      1
     );
 
     const expenses = await db.transaction.aggregate({
@@ -42,7 +44,7 @@ export async function getCurrentBudget(accountId) {
         type: "EXPENSE",
         date: {
           gte: startOfMonth,
-          lte: endOfMonth,
+          lt: startOfNextMonth,
         },
         accountId,
       },

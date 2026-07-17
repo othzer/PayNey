@@ -49,12 +49,30 @@ export async function POST(req) {
     );
   }
 
-  const candidateDate =
+  // Prefer the date printed in the message; otherwise the device's capture
+  // timestamp (when the transaction actually happened, even if this request
+  // arrives later from the offline outbox); "now" only as a last resort.
+  const parsedDate =
     parsed.date instanceof Date && !Number.isNaN(parsed.date.getTime())
       ? parsed.date
-      : timestamp
-        ? new Date(timestamp)
-        : new Date();
+      : null;
+  const deviceDateRaw = timestamp ? new Date(timestamp) : null;
+  const deviceDate =
+    deviceDateRaw && !Number.isNaN(deviceDateRaw.getTime()) ? deviceDateRaw : null;
+
+  let candidateDate = parsedDate || deviceDate || new Date();
+  // Message-printed dates are date-only (midnight). When the device timestamp
+  // falls on the same calendar day, use it instead — it carries the real
+  // time-of-day, which keeps the ±5min dedup window meaningful.
+  if (
+    parsedDate &&
+    deviceDate &&
+    parsedDate.getFullYear() === deviceDate.getFullYear() &&
+    parsedDate.getMonth() === deviceDate.getMonth() &&
+    parsedDate.getDate() === deviceDate.getDate()
+  ) {
+    candidateDate = deviceDate;
+  }
 
   const duplicate = await findDuplicate(user.id, {
     referenceNumber: parsed.referenceNumber,
