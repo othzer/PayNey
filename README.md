@@ -286,8 +286,37 @@ DECISIONS.md           # Engineering decision log
 
 ---
 
+## 🤝 Contributing
+
+Contributions are always welcome.
+
+1. Star the repository
+2. Fork the repository
+3. Create a feature branch
+4. Commit your changes
+5. Open a Pull Request
+
+---
+
+## ⭐ Support
+
+If you found PayNey useful,
+
+please consider giving the repository a ⭐.
+
+It helps more than you think.
+
+---
+
+## 📜License
+
+Proprietary  — © OtzrLabs. All rights reserved.
+
+---
+
+
 <div align="center">
 
-Made with care for people who'd rather live their lives than log their lattes.
+_Made with care for people who'd rather live their lives than log their lattes._
 
 </div>
